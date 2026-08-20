@@ -34,7 +34,11 @@ MariaDB is also exposed on host port **3307** (`recipes` / `secret`).
 | Proteins | `/api/proteins` |
 | Meal styles | `/api/recipe-styles` |
 
-CORS allows `http://localhost:5173` and `http://127.0.0.1:5173`.
+CORS allows origins listed in `CORS_ALLOWED_ORIGINS` (default: local Vite).
+
+## Production deploy
+
+See [`../plan/DEPLOY.md`](../plan/DEPLOY.md) for Debian 12 + Apache + existing MariaDB steps.
 
 ## Auth (single user)
 
@@ -63,3 +67,4 @@ Recipe/inventory data is **not** scoped to users — auth only gates access.
 - Soft-delete uses `ri_recipe.is_deleted` (not `deleted_at`).
 - `recipe_link` is `varchar(255)`.
 - Seed data comes from `database/seeders/data/api_db_dump.sql`.
+# RecipeRebootLaravel
