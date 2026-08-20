@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AttributeController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\IngredientController;
 use App\Http\Controllers\Api\InventoryController;
@@ -33,4 +34,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('proteins', ProteinController::class);
     Route::apiResource('recipe-styles', RecipeStyleController::class);
+    Route::get('attributes', [AttributeController::class, 'index']);
 });

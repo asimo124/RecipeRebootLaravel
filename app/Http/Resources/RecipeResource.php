@@ -22,6 +22,7 @@ class RecipeResource extends JsonResource
             'protein' => new ProteinResource($this->whenLoaded('protein')),
             'style' => new RecipeStyleResource($this->whenLoaded('style')),
             'ingredients' => IngredientResource::collection($this->whenLoaded('ingredients')),
+            'attributes' => AttributeResource::collection($this->whenLoaded('attributes')),
             'availability' => $this->when(isset($this->availability), $this->availability),
         ];
     }

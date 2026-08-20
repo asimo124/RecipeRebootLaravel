@@ -23,6 +23,8 @@ class UpdateRecipeRequest extends FormRequest
             'recipe_link' => ['nullable', 'string', 'max:255'],
             'ingredient_ids' => ['sometimes', 'array'],
             'ingredient_ids.*' => ['integer', 'exists:ri_ingredient,id'],
+            'attribute_ids' => ['sometimes', 'array'],
+            'attribute_ids.*' => ['integer', 'exists:ri_attribute,id'],
         ];
     }
 }

@@ -21,7 +21,7 @@ class RecipeController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $recipes = Recipe::query()
-            ->with(['protein', 'style'])
+            ->with(['protein', 'style', 'attributes'])
             ->orderBy('title')
             ->get();
 
@@ -32,7 +32,8 @@ class RecipeController extends Controller
     {
         $data = $request->validated();
         $ingredientIds = $data['ingredient_ids'] ?? null;
-        unset($data['ingredient_ids']);
+        $attributeIds = $data['attribute_ids'] ?? null;
+        unset($data['ingredient_ids'], $data['attribute_ids']);
 
         $recipe = Recipe::query()->create($data);
 
@@ -40,14 +41,18 @@ class RecipeController extends Controller
             $recipe->ingredients()->sync($ingredientIds);
         }
 
-        $recipe->load(['protein', 'style', 'ingredients.type']);
+        if (is_array($attributeIds)) {
+            $recipe->attributes()->sync($attributeIds);
+        }
+
+        $recipe->load(['protein', 'style', 'ingredients.type', 'attributes']);
 
         return new RecipeResource($recipe);
     }
 
     public function show(Recipe $recipe): RecipeResource
     {
-        $recipe->load(['protein', 'style', 'ingredients.type']);
+        $recipe->load(['protein', 'style', 'ingredients.type', 'attributes']);
         $recipe->availability = $this->availability->forRecipe($recipe);
 
         return new RecipeResource($recipe);
@@ -57,7 +62,8 @@ class RecipeController extends Controller
     {
         $data = $request->validated();
         $ingredientIds = $data['ingredient_ids'] ?? null;
-        unset($data['ingredient_ids']);
+        $attributeIds = $data['attribute_ids'] ?? null;
+        unset($data['ingredient_ids'], $data['attribute_ids']);
 
         $recipe->update($data);
 
@@ -65,7 +71,11 @@ class RecipeController extends Controller
             $recipe->ingredients()->sync($ingredientIds);
         }
 
-        $recipe->load(['protein', 'style', 'ingredients.type']);
+        if (is_array($attributeIds)) {
+            $recipe->attributes()->sync($attributeIds);
+        }
+
+        $recipe->load(['protein', 'style', 'ingredients.type', 'attributes']);
         $recipe->availability = $this->availability->forRecipe($recipe);
 
         return new RecipeResource($recipe);
@@ -85,7 +95,7 @@ class RecipeController extends Controller
         ]);
 
         $recipe->ingredients()->syncWithoutDetaching([$data['ingredient_id']]);
-        $recipe->load(['protein', 'style', 'ingredients.type']);
+        $recipe->load(['protein', 'style', 'ingredients.type', 'attributes']);
 
         return new RecipeResource($recipe);
     }
@@ -93,7 +103,7 @@ class RecipeController extends Controller
     public function detachIngredient(Recipe $recipe, int $ingredientId): RecipeResource
     {
         $recipe->ingredients()->detach($ingredientId);
-        $recipe->load(['protein', 'style', 'ingredients.type']);
+        $recipe->load(['protein', 'style', 'ingredients.type', 'attributes']);
 
         return new RecipeResource($recipe);
     }

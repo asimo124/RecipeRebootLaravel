@@ -25,12 +25,14 @@ class DatabaseSeeder extends Seeder
         foreach ([
             'ri_home_inventory',
             'ri_recipe_ingredient',
+            'ri_recipe_attribute',
             'ri_related_ingredient',
             'ri_recipe',
             'ri_ingredient',
             'ri_ingredient_type',
             'ri_protein',
             'ri_recipe_style',
+            'ri_attribute',
         ] as $table) {
             DB::table($table)->truncate();
         }
@@ -42,9 +44,11 @@ class DatabaseSeeder extends Seeder
             'ri_ingredient_type',
             'ri_protein',
             'ri_recipe_style',
+            'ri_attribute',
             'ri_ingredient',
             'ri_recipe',
             'ri_recipe_ingredient',
+            'ri_recipe_attribute',
             'ri_home_inventory',
             'ri_related_ingredient',
         ];
