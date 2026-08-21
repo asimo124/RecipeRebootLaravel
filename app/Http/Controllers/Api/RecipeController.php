@@ -23,8 +23,8 @@ class RecipeController extends Controller
         $recipes = Recipe::query()
             ->with(['protein', 'style', 'attributes'])
             ->withMax('attributes', 'severity_level')
-            ->orderByRaw('attributes_max_severity_level IS NULL ASC')
-            ->orderByDesc('attributes_max_severity_level')
+            ->orderByRaw('attributes_max_severity_level IS NULL DESC')
+            ->orderBy('attributes_max_severity_level')
             ->orderBy('title')
             ->get();
 
