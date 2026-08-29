@@ -63,6 +63,46 @@ return [
             ]) : [],
         ],
 
+        'asimo124_bills' => [
+            'driver' => 'mysql',
+            'url' => env('BILLS_DATABASE_URL'),
+            'host' => env('BILLS_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('BILLS_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('BILLS_DB_DATABASE', 'asimo124_bills'),
+            'username' => env('BILLS_DB_USERNAME', env('DB_USERNAME', 'forge')),
+            'password' => env('BILLS_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('BILLS_DB_SOCKET', env('DB_SOCKET', '')),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
+        'asimo124_bills_test' => [
+            'driver' => 'mysql',
+            'url' => env('BILLS_TEST_DATABASE_URL'),
+            'host' => env('BILLS_TEST_DB_HOST', env('DB_HOST', '127.0.0.1')),
+            'port' => env('BILLS_TEST_DB_PORT', env('DB_PORT', '3306')),
+            'database' => env('BILLS_TEST_DB_DATABASE', 'asimo124_bills_test'),
+            'username' => env('BILLS_TEST_DB_USERNAME', env('DB_USERNAME', 'forge')),
+            'password' => env('BILLS_TEST_DB_PASSWORD', env('DB_PASSWORD', '')),
+            'unix_socket' => env('BILLS_TEST_DB_SOCKET', env('DB_SOCKET', '')),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),

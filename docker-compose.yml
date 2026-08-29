@@ -12,8 +12,16 @@ services:
       DB_DATABASE: ${DB_DATABASE:-recipes}
       DB_USERNAME: ${DB_USERNAME:-recipes}
       DB_PASSWORD: ${DB_PASSWORD:-secret}
+      BILLS_SITE_PATH: /var/www/bills-site
+      BILLS_DB_HOST: db
+      BILLS_DB_PORT: 3306
+      BILLS_DB_DATABASE: ${BILLS_DB_DATABASE:-asimo124_bills}
+      BILLS_DB_DATABASE3: ${BILLS_TEST_DB_DATABASE:-asimo124_bills_test}
+      BILLS_DB_USERNAME: ${DB_USERNAME:-recipes}
+      BILLS_DB_PASSWORD: ${DB_PASSWORD:-secret}
     volumes:
       - ./:/var/www/html
+      - ${BILLS_SITE_HOST_PATH:-/Users/alexhawley/Library/Mobile Documents/com~apple~CloudDocs/Documents/PHPSites/BillsSite}:/var/www/bills-site:ro
     networks:
       - recipes
     depends_on:
@@ -35,7 +43,7 @@ services:
       - app
 
   db:
-    image: mariadb:10.11.18
+    image: mysql:8.0
     container_name: recipes_db
     restart: unless-stopped
     environment:
@@ -46,15 +54,17 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - recipes_db_data:/var/lib/mysql
+      - recipes_mysql8_data:/var/lib/mysql
+      - ./docker/mysql/grant-recipes.sql:/docker-entrypoint-initdb.d/grant-recipes.sql:ro
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD:-rootsecret}"]
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 30
+      start_period: 20s
     networks:
       - recipes
 
@@ -63,4 +73,4 @@ networks:
     driver: bridge
 
 volumes:
-  recipes_db_data:
+  recipes_mysql8_data:

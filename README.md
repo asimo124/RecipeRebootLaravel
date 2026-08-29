@@ -5,7 +5,7 @@ JSON API for the Recipe Book app. Vue frontend lives in the separate `recipes_vu
 ## Stack
 
 - Laravel 10
-- MariaDB 10.11.18
+- MySQL 8.0
 - Docker Compose (`app` PHP-FPM, `webserver` nginx, `db`)
 
 ## Quick start
@@ -20,7 +20,7 @@ docker compose exec app php artisan db:seed --force
 
 API base URL: **http://localhost:8080/api**
 
-MariaDB is also exposed on host port **3307** (`recipes` / `secret`).
+MySQL is also exposed on host port **3307** (`recipes` / `secret`).
 
 ## Main endpoints
 
@@ -40,7 +40,16 @@ CORS allows origins listed in `CORS_ALLOWED_ORIGINS` (default: local Vite).
 
 See [`../plan/DEPLOY.md`](../plan/DEPLOY.md) for Debian 12 + Apache + existing MariaDB steps.
 
-## Auth (single user)
+## Bills / MyBudget legacy API
+
+MyBudgetLP calls the same legacy BillsSite paths (e.g. `/api/auth/login.php`, `/api/expenses/list.php`). These are registered in `routes/bills_legacy.php` from `routes/bills_legacy_map.php` and handled by RESTful controllers under `App\Http\Controllers\Api\Bills\*`.
+
+- **Auth** (`AuthController`) is implemented in Laravel (`BillsAuthService`) against `hth_users` / `hth_user_sessions` on the `asimo124_bills` connection.
+- **All other endpoints** currently delegate to the BillsSite PHP scripts via `LegacyBillsScriptRunner` (configure `BILLS_SITE_PATH` in `.env`).
+- Port endpoints to native Laravel services over time, then drop the legacy bridge for each action.
+
+Recipe Book JSON API routes (`/api/login`, `/api/recipes`, …) are unchanged.
+
 
 All API routes except `POST /api/login` require a Sanctum bearer token.
 
