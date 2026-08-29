@@ -6,6 +6,7 @@ use App\Exceptions\BillsLegacyResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use RuntimeException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class LegacyBillsScriptRunner
 {
@@ -78,6 +79,8 @@ class LegacyBillsScriptRunner
         $_SERVER['REQUEST_METHOD'] = $request->method();
         $_SERVER['HTTP_AUTHORIZATION'] = $request->header('Authorization', '');
         $_SERVER['CONTENT_TYPE'] = $request->header('Content-Type', '');
+        $_SERVER['REMOTE_ADDR'] = $request->ip() ?? '127.0.0.1';
+        $_SERVER['HTTP_USER_AGENT'] = $request->userAgent() ?? '';
 
         $origin = $request->header('Origin', '');
         if ($origin !== '') {
@@ -87,7 +90,7 @@ class LegacyBillsScriptRunner
         $_GET = $request->query->all();
         $_POST = $request->request->all();
         $_REQUEST = array_merge($_GET, $_POST, $request->all());
-        $_FILES = $request->files->all();
+        $_FILES = $this->normalizeUploadedFiles($request->files->all());
 
         $json = $request->json()->all();
         if (is_array($json) && $json !== []) {
@@ -116,5 +119,48 @@ class LegacyBillsScriptRunner
 
         // api_db is optional; fall back to recipes DB name when not configured.
         putenv('BILLS_DB_DATABASE2='.($recipes['database'] ?? 'api_db'));
+    }
+
+    /**
+     * @param  array<string, mixed>  $files
+     * @return array<string, mixed>
+     */
+    private function normalizeUploadedFiles(array $files): array
+    {
+        $normalized = [];
+
+        foreach ($files as $key => $file) {
+            $normalized[$key] = $this->normalizeUploadedFile($file);
+        }
+
+        return $normalized;
+    }
+
+    private function normalizeUploadedFile(mixed $file): mixed
+    {
+        if ($file instanceof UploadedFile) {
+            return [
+                'name' => $file->getClientOriginalName(),
+                'type' => $file->getClientMimeType() ?? '',
+                'tmp_name' => $file->getPathname(),
+                'error' => $file->getError(),
+                'size' => $file->getSize(),
+            ];
+        }
+
+        if (! is_array($file)) {
+            return $file;
+        }
+
+        if (array_is_list($file)) {
+            return array_map(fn (mixed $item): mixed => $this->normalizeUploadedFile($item), $file);
+        }
+
+        $normalized = [];
+        foreach ($file as $key => $value) {
+            $normalized[$key] = $this->normalizeUploadedFile($value);
+        }
+
+        return $normalized;
     }
 }
