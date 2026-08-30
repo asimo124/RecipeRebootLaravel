@@ -51,7 +51,9 @@ class DisposableTrackerService
         }
 
         $types = $this->normalizeTransactionTypes($filters['transaction_types'] ?? null);
-        $query->whereIn('dt_transaction.transaction_type', $types);
+        if ($types !== []) {
+            $query->whereIn('dt_transaction.transaction_type', $types);
+        }
 
         $this->applyKeywordFilter($query, $filters, 1);
         $this->applyKeywordFilter($query, $filters, 2);
@@ -68,7 +70,7 @@ class DisposableTrackerService
             ->map(static function ($row) {
                 $transactionType = $row->transaction_type instanceof TransactionType
                     ? $row->transaction_type->value
-                    : (string) $row->transaction_type;
+                    : ($row->transaction_type !== null ? (string) $row->transaction_type : null);
 
                 return [
                     'id' => $row->id,
@@ -109,7 +111,7 @@ class DisposableTrackerService
         }
 
         if (! is_array($types) || $types === []) {
-            return [TransactionType::Disposable->value];
+            return [];
         }
 
         $valid = self::transactionTypeValues();
