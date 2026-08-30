@@ -155,6 +155,9 @@ class DisposableController extends BillsApiController
         $payload = $response->getData(true);
 
         if (is_array($payload) && ($payload['success'] ?? false)) {
+            $cleared = $this->savedSearchService->clearNonImpulseBuyTransactionTypes();
+            $payload['transaction_types_cleared'] = $cleared['updated'] ?? 0;
+
             $applied = $this->savedSearchService->reRunSavedSearches();
             $payload['saved_searches_applied'] = $applied['searches_applied'] ?? 0;
             $payload['saved_searches_updated'] = $applied['updated'] ?? 0;

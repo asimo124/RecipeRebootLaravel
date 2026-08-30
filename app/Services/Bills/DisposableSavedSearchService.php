@@ -100,6 +100,18 @@ class DisposableSavedSearchService
     }
 
     /**
+     * Clear transaction types before re-applying saved searches, preserving impulse buys.
+     */
+    public function clearNonImpulseBuyTransactionTypes(): array
+    {
+        $updated = DtTransaction::query()
+            ->where('transaction_type', '!=', TransactionType::ImpulseBuy->value)
+            ->update(['transaction_type' => null]);
+
+        return ['success' => true, 'updated' => $updated];
+    }
+
+    /**
      * Apply every saved search pattern against the full dt_transaction table.
      *
      * @return array{success: bool, updated: int, searches_applied: int}
