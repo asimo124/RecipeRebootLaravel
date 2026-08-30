@@ -2,6 +2,7 @@
 
 namespace App\Models\Bills;
 
+use App\Enums\Bills\SearchType;
 use App\Enums\Bills\TransactionType;
 
 class DtTransactionTypeSavedSearch extends BillsModel
@@ -13,6 +14,7 @@ class DtTransactionTypeSavedSearch extends BillsModel
     ];
 
     protected $casts = [
+        'search_type' => SearchType::class,
         'transaction_type' => TransactionType::class,
     ];
 }

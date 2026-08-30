@@ -99,6 +99,12 @@ return [
     'updateAllNotCovered.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateAllNotCovered'],
     'updateDisposableTransactionCovered.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateTransactionCovered'],
     'updateDisposableTransactionTypes.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'bulkUpdateTransactionTypes'],
+    'loadDisposableSavedSearches.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'savedSearches'],
+    'createDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'storeSavedSearch'],
+    'updateDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateSavedSearch'],
+    'deleteDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'destroySavedSearch'],
+    'revertDisposableTransactions.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'revertAllToDisposable'],
+    'reRunDisposableSavedSearches.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'reRunSavedSearches'],
 
     // expenses
     'expenses/create.php' => ['App\Http\Controllers\Api\Bills\ExpenseController', 'store'],
