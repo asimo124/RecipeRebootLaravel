@@ -129,9 +129,9 @@ class DisposableController extends BillsApiController
         return response()->json($result, ($result['success'] ?? false) ? 200 : 404);
     }
 
-    public function revertAllToDisposable(): JsonResponse
+    public function revertAllToBlank(): JsonResponse
     {
-        return response()->json($this->savedSearchService->revertAllToDisposable());
+        return response()->json($this->savedSearchService->revertAllToBlank());
     }
 
     public function reRunSavedSearches(): JsonResponse

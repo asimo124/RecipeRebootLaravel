@@ -90,10 +90,10 @@ class DisposableSavedSearchService
         return ['success' => true];
     }
 
-    public function revertAllToDisposable(): array
+    public function revertAllToBlank(): array
     {
         $updated = DtTransaction::query()->update([
-            'transaction_type' => TransactionType::Disposable->value,
+            'transaction_type' => null,
         ]);
 
         return ['success' => true, 'updated' => $updated];

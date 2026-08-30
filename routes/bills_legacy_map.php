@@ -103,7 +103,7 @@ return [
     'createDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'storeSavedSearch'],
     'updateDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateSavedSearch'],
     'deleteDisposableSavedSearch.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'destroySavedSearch'],
-    'revertDisposableTransactions.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'revertAllToDisposable'],
+    'revertDisposableTransactions.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'revertAllToBlank'],
     'reRunDisposableSavedSearches.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'reRunSavedSearches'],
 
     // expenses
