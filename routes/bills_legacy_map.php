@@ -98,6 +98,7 @@ return [
     'loadDisposableTransactionsChartDataDay.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'chartDataDay'],
     'updateAllNotCovered.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateAllNotCovered'],
     'updateDisposableTransactionCovered.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'updateTransactionCovered'],
+    'updateDisposableTransactionTypes.php' => ['App\Http\Controllers\Api\Bills\DisposableController', 'bulkUpdateTransactionTypes'],
 
     // expenses
     'expenses/create.php' => ['App\Http\Controllers\Api\Bills\ExpenseController', 'store'],

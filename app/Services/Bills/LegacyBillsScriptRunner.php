@@ -53,6 +53,15 @@ class LegacyBillsScriptRunner
     {
         $this->syncSuperglobals($request);
         $this->syncDatabaseEnv();
+        $this->syncLegacyPaths();
+    }
+
+    private function syncLegacyPaths(): void
+    {
+        $disposableDataPath = (string) config('bills.disposable_data_path');
+        if ($disposableDataPath !== '') {
+            putenv('DISPOSABLE_INCOME_TRACKER_DATA_DIR='.$disposableDataPath);
+        }
     }
 
     private function injectSanctumUser(Request $request): void

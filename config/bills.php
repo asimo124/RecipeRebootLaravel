@@ -16,4 +16,18 @@ return [
       'trim',
       explode(',', (string) env('BILLS_CORS_ORIGINS', ''))
   ))),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Disposable income tracker CSV uploads
+  |--------------------------------------------------------------------------
+  |
+  | Writable directory for Rocket Money CSV imports. In Docker the BillsSite
+  | mount is read-only, so this defaults to Laravel storage.
+  |
+  */
+  'disposable_data_path' => env(
+      'DISPOSABLE_INCOME_TRACKER_DATA_DIR',
+      storage_path('app/disposable_income_tracker')
+  ),
 ];
