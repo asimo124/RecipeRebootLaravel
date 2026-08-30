@@ -40,7 +40,7 @@ class DisposableController extends BillsApiController
 
     public function chartData(Request $request): JsonResponse
     {
-        return $this->legacy('loadDisposableTransactionsChartData.php', $request);
+        return response()->json($this->trackerService->impulseBuyChartData($request->all()));
     }
 
     public function chartDataCategory(Request $request): JsonResponse
@@ -50,7 +50,7 @@ class DisposableController extends BillsApiController
 
     public function chartDataDay(Request $request): JsonResponse
     {
-        return $this->legacy('loadDisposableTransactionsChartDataDay.php', $request);
+        return response()->json($this->trackerService->impulseBuyDayTransactions($request->all()));
     }
 
     public function institutionNames(Request $request): JsonResponse

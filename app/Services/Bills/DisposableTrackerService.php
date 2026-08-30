@@ -118,6 +118,110 @@ class DisposableTrackerService
         return ['success' => true, 'updated' => $updated];
     }
 
+    /** @param array<string, mixed> $filters */
+    public function impulseBuyChartData(array $filters): array
+    {
+        $query = DtTransaction::query()
+            ->where('transaction_type', TransactionType::ImpulseBuy->value)
+            ->where('amount', '>', 0);
+
+        if (! empty($filters['start_paycheck_date'])) {
+            $query->where('transaction_date', '>=', (string) $filters['start_paycheck_date']);
+        }
+
+        if (! empty($filters['end_paycheck_date'])) {
+            $query->where('transaction_date', '<=', (string) $filters['end_paycheck_date']);
+        }
+
+        $rows = $query
+            ->selectRaw('transaction_date, SUM(amount) as amount_total')
+            ->groupBy('transaction_date')
+            ->orderBy('transaction_date')
+            ->get();
+
+        $categories = [];
+        $dates = [];
+        $data = [];
+
+        foreach ($rows as $row) {
+            $date = Carbon::parse($row->transaction_date);
+            $categories[] = $this->formatChartDateLabel($date);
+            $dates[] = $date->format('Y-m-d');
+            $data[] = round((float) $row->amount_total, 2);
+        }
+
+        return [
+            'categories' => $categories,
+            'dates' => $dates,
+            'series' => [
+                [
+                    'name' => 'Amount',
+                    'data' => $data,
+                ],
+            ],
+        ];
+    }
+
+    /** @param array<string, mixed> $filters */
+    public function impulseBuyDayTransactions(array $filters): array
+    {
+        $transactionDate = trim((string) ($filters['transaction_date'] ?? ''));
+        if ($transactionDate === '') {
+            return ['items' => [], 'amount_total' => 0, 'error' => 'transaction_date is required'];
+        }
+
+        $query = DtTransaction::query()
+            ->leftJoin('dt_transaction_category as tc', 'dt_transaction.transaction_category_id', '=', 'tc.id')
+            ->where('dt_transaction.transaction_type', TransactionType::ImpulseBuy->value)
+            ->where('dt_transaction.amount', '>', 0)
+            ->whereDate('dt_transaction.transaction_date', $transactionDate)
+            ->select([
+                'dt_transaction.id',
+                'dt_transaction.name',
+                'dt_transaction.amount',
+                'dt_transaction.transaction_date',
+                'tc.title as category_name',
+            ]);
+
+        if (! empty($filters['start_paycheck_date'])) {
+            $query->where('dt_transaction.transaction_date', '>=', (string) $filters['start_paycheck_date']);
+        }
+
+        if (! empty($filters['end_paycheck_date'])) {
+            $query->where('dt_transaction.transaction_date', '<=', (string) $filters['end_paycheck_date']);
+        }
+
+        $items = $query
+            ->orderByDesc('dt_transaction.amount')
+            ->orderBy('dt_transaction.name')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'id' => $row->id,
+                    'name' => $row->name,
+                    'amount' => number_format((float) $row->amount, 2, '.', ''),
+                    'transaction_date' => $row->transaction_date,
+                    'transaction_date_display' => $this->formatChartDateLabel(Carbon::parse($row->transaction_date)),
+                    'category_name' => $row->category_name,
+                ];
+            })
+            ->values()
+            ->all();
+
+        $amountTotal = array_reduce(
+            $items,
+            static fn (float $carry, array $item): float => $carry + (float) $item['amount'],
+            0.0
+        );
+
+        return [
+            'items' => $items,
+            'amount_total' => round($amountTotal, 2),
+            'transaction_date' => $transactionDate,
+            'transaction_date_display' => $this->formatChartDateLabel(Carbon::parse($transactionDate)),
+        ];
+    }
+
     /** @param mixed $types */
     private function normalizeTransactionTypes($types): array
     {
@@ -181,5 +285,19 @@ class DisposableTrackerService
         $direction = strtoupper((string) $sortDir) === 'DESC' ? 'DESC' : 'ASC';
 
         return [$column, $direction];
+    }
+
+    private function formatChartDateLabel(Carbon $date): string
+    {
+        $day = (int) $date->format('j');
+        $suffix = match (true) {
+            in_array($day % 100, [11, 12, 13], true) => 'th',
+            $day % 10 === 1 => 'st',
+            $day % 10 === 2 => 'nd',
+            $day % 10 === 3 => 'rd',
+            default => 'th',
+        };
+
+        return $date->format('M').' '.$day.$suffix;
     }
 }
