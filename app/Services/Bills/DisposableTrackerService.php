@@ -56,8 +56,13 @@ class DisposableTrackerService
         $this->applyKeywordFilter($query, $filters, 1);
         $this->applyKeywordFilter($query, $filters, 2);
 
+        [$sortColumn, $sortDir] = $this->normalizeSort(
+            $filters['sort_by'] ?? null,
+            $filters['sort_dir'] ?? null
+        );
+
         $items = $query
-            ->orderBy('dt_transaction.transaction_date')
+            ->orderBy($sortColumn, $sortDir)
             ->orderBy('dt_transaction.name')
             ->get()
             ->map(static function ($row) {
@@ -144,5 +149,20 @@ class DisposableTrackerService
         } else {
             $query->where('dt_transaction.name', 'like', $likePattern);
         }
+    }
+
+    /** @return array{0: string, 1: string} */
+    private function normalizeSort(mixed $sortBy, mixed $sortDir): array
+    {
+        $columns = [
+            'name' => 'dt_transaction.name',
+            'transaction_date' => 'dt_transaction.transaction_date',
+            'amount' => 'dt_transaction.amount',
+        ];
+
+        $column = $columns[(string) $sortBy] ?? $columns['transaction_date'];
+        $direction = strtoupper((string) $sortDir) === 'DESC' ? 'DESC' : 'ASC';
+
+        return [$column, $direction];
     }
 }
