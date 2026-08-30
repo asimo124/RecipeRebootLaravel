@@ -51,8 +51,23 @@ class DisposableTrackerService
         }
 
         $types = $this->normalizeTransactionTypes($filters['transaction_types'] ?? null);
-        if ($types !== []) {
-            $query->whereIn('dt_transaction.transaction_type', $types);
+        $includeBlank = in_array('blank', $types, true);
+        $concreteTypes = array_values(array_filter(
+            $types,
+            static fn (string $type): bool => $type !== 'blank'
+        ));
+
+        if ($includeBlank || $concreteTypes !== []) {
+            $query->where(function (Builder $inner) use ($includeBlank, $concreteTypes) {
+                if ($includeBlank) {
+                    $inner->whereNull('dt_transaction.transaction_type');
+                }
+
+                if ($concreteTypes !== []) {
+                    $method = $includeBlank ? 'orWhereIn' : 'whereIn';
+                    $inner->{$method}('dt_transaction.transaction_type', $concreteTypes);
+                }
+            });
         }
 
         $this->applyKeywordFilter($query, $filters, 1);
@@ -114,7 +129,7 @@ class DisposableTrackerService
             return [];
         }
 
-        $valid = self::transactionTypeValues();
+        $valid = [...self::transactionTypeValues(), 'blank'];
 
         return array_values(array_intersect($types, $valid));
     }
