@@ -35,11 +35,19 @@ class DisposableTrackerService
             ]);
 
         if (! empty($filters['start_paycheck_date'])) {
-            $query->where('dt_transaction.paycheck_date', '>=', $filters['start_paycheck_date']);
+            $query->where(
+                'dt_transaction.transaction_date',
+                '>=',
+                (string) $filters['start_paycheck_date']
+            );
         }
 
         if (! empty($filters['end_paycheck_date'])) {
-            $query->where('dt_transaction.paycheck_date', '<=', $filters['end_paycheck_date']);
+            $query->where(
+                'dt_transaction.transaction_date',
+                '<=',
+                (string) $filters['end_paycheck_date']
+            );
         }
 
         $types = $this->normalizeTransactionTypes($filters['transaction_types'] ?? null);
@@ -49,7 +57,6 @@ class DisposableTrackerService
         $this->applyKeywordFilter($query, $filters, 2);
 
         $items = $query
-            ->orderBy('dt_transaction.paycheck_date')
             ->orderBy('dt_transaction.transaction_date')
             ->orderBy('dt_transaction.name')
             ->get()
