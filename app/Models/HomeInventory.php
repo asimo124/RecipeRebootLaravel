@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class HomeInventory extends Model
+class HomeInventory extends RecipeModel
 {
     protected $table = 'ri_home_inventory';
-
-    public $timestamps = false;
 
     protected $fillable = ['ingredient_id'];
 

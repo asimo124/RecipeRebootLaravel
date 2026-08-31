@@ -19,7 +19,7 @@ class IngredientController extends Controller
         $query = Ingredient::query()->with('type')->orderBy('title');
 
         if ($search = $request->query('search')) {
-            $query->where('title', 'like', '%'.$search.'%');
+            $query->where('title', 'ilike', '%'.$search.'%');
         }
 
         $limit = min((int) $request->query('limit', 50), 100);

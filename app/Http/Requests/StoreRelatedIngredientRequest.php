@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\RecipeModel;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreRelatedIngredientRequest extends FormRequest
@@ -14,7 +15,7 @@ class StoreRelatedIngredientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'related_ingredient_id' => ['required', 'integer', 'exists:ri_ingredient,id', 'different:ingredient'],
+            'related_ingredient_id' => ['required', 'integer', RecipeModel::existsRule('ri_ingredient'), 'different:ingredient'],
         ];
     }
 }

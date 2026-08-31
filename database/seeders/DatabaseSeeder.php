@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\RecipeModel;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -20,45 +21,27 @@ class DatabaseSeeder extends Seeder
             return;
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        $pgsql = DB::connection(RecipeModel::CONNECTION_NAME);
+        $tables = RecipeModel::TABLES_IN_FK_ORDER;
 
-        foreach ([
-            'ri_home_inventory',
-            'ri_recipe_ingredient',
-            'ri_recipe_attribute',
-            'ri_related_ingredient',
-            'ri_recipe',
-            'ri_ingredient',
-            'ri_ingredient_type',
-            'ri_protein',
-            'ri_recipe_style',
-            'ri_attribute',
-        ] as $table) {
-            DB::table($table)->truncate();
-        }
+        $pgsql->statement('TRUNCATE TABLE '.implode(', ', $tables).' RESTART IDENTITY CASCADE');
 
-        $sql = File::get($path);
+        $sql = str_replace('`', '', File::get($path));
 
-        // Prefer lookup tables before dependents regardless of dump order.
-        $ordered = [
-            'ri_ingredient_type',
-            'ri_protein',
-            'ri_recipe_style',
-            'ri_attribute',
-            'ri_ingredient',
-            'ri_recipe',
-            'ri_recipe_ingredient',
-            'ri_recipe_attribute',
-            'ri_home_inventory',
-            'ri_related_ingredient',
-        ];
-
-        foreach ($ordered as $table) {
-            if (preg_match('/INSERT INTO `'.$table.'`[\s\S]*?;/i', $sql, $match)) {
-                DB::unprepared($match[0]);
+        foreach ($tables as $table) {
+            if (preg_match('/INSERT INTO '.$table.'[\s\S]*?;/i', $sql, $match)) {
+                $pgsql->unprepared($match[0]);
             }
         }
 
-        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        foreach ($tables as $table) {
+            $max = $pgsql->table($table)->max('id');
+            if ($max) {
+                $pgsql->statement(
+                    "SELECT setval(pg_get_serial_sequence(?, 'id'), ?)",
+                    [$table, (int) $max]
+                );
+            }
+        }
     }
 }

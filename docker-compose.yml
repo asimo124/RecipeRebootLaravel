@@ -12,6 +12,11 @@ services:
       DB_DATABASE: ${DB_DATABASE:-recipes}
       DB_USERNAME: ${DB_USERNAME:-recipes}
       DB_PASSWORD: ${DB_PASSWORD:-secret}
+      PGSQL_HOST: pgsql
+      PGSQL_PORT: 5432
+      PGSQL_DATABASE: ${PGSQL_DATABASE:-recipes}
+      PGSQL_USERNAME: ${PGSQL_USERNAME:-recipes}
+      PGSQL_PASSWORD: ${PGSQL_PASSWORD:-secret}
       BILLS_SITE_PATH: /var/www/bills-site
       BILLS_DB_HOST: db
       BILLS_DB_PORT: 3306
@@ -26,6 +31,8 @@ services:
       - recipes
     depends_on:
       db:
+        condition: service_healthy
+      pgsql:
         condition: service_healthy
 
   webserver:
@@ -68,9 +75,31 @@ services:
     networks:
       - recipes
 
+  pgsql:
+    image: postgres:16-alpine
+    container_name: recipes_pgsql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PGSQL_DATABASE:-recipes}
+      POSTGRES_USER: ${PGSQL_USERNAME:-recipes}
+      POSTGRES_PASSWORD: ${PGSQL_PASSWORD:-secret}
+    ports:
+      - "5433:5432"
+    volumes:
+      - recipes_pgsql_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PGSQL_USERNAME:-recipes} -d ${PGSQL_DATABASE:-recipes}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+    networks:
+      - recipes
+
 networks:
   recipes:
     driver: bridge
 
 volumes:
   recipes_mysql8_data:
+  recipes_pgsql_data:

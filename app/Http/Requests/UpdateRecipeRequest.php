@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\RecipeModel;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRecipeRequest extends FormRequest
@@ -18,13 +19,13 @@ class UpdateRecipeRequest extends FormRequest
             'last_date_made' => ['nullable', 'date'],
             'contains_gluten' => ['nullable', 'boolean'],
             'image_path' => ['nullable', 'string', 'max:255'],
-            'protein_id' => ['nullable', 'integer', 'exists:ri_protein,id'],
-            'recipe_style_id' => ['nullable', 'integer', 'exists:ri_recipe_style,id'],
+            'protein_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_protein')],
+            'recipe_style_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_recipe_style')],
             'recipe_link' => ['nullable', 'string', 'max:255'],
             'ingredient_ids' => ['sometimes', 'array'],
-            'ingredient_ids.*' => ['integer', 'exists:ri_ingredient,id'],
+            'ingredient_ids.*' => ['integer', RecipeModel::existsRule('ri_ingredient')],
             'attribute_ids' => ['sometimes', 'array'],
-            'attribute_ids.*' => ['integer', 'exists:ri_attribute,id'],
+            'attribute_ids.*' => ['integer', RecipeModel::existsRule('ri_attribute')],
         ];
     }
 }

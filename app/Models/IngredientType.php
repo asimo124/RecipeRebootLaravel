@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class IngredientType extends Model
+class IngredientType extends RecipeModel
 {
     protected $table = 'ri_ingredient_type';
-
-    public $timestamps = false;
 
     protected $fillable = ['title'];
 

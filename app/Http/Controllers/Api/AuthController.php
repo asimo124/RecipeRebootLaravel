@@ -28,10 +28,13 @@ class AuthController extends Controller
 
         // Single-user app: replace any prior tokens on login.
         $user->tokens()->delete();
-        $token = $user->createToken('spa')->plainTextToken;
+
+        $expiresAt = now()->addMinutes((int) config('sanctum.expiration', 60 * 24 * 30));
+        $token = $user->createToken('spa', ['*'], $expiresAt)->plainTextToken;
 
         return response()->json([
             'token' => $token,
+            'expires_at' => $expiresAt->format('Y-m-d H:i:s'),
             'user' => $this->userPayload($user),
         ]);
     }

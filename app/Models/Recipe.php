@@ -3,17 +3,14 @@
 namespace App\Models;
 
 use App\Models\Concerns\SoftDeletesByFlag;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Recipe extends Model
+class Recipe extends RecipeModel
 {
     use SoftDeletesByFlag;
 
     protected $table = 'ri_recipe';
-
-    public $timestamps = false;
 
     protected $fillable = [
         'title',

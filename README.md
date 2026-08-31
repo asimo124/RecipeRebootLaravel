@@ -5,8 +5,9 @@ JSON API for the Recipe Book app. Vue frontend lives in the separate `recipes_vu
 ## Stack
 
 - Laravel 10
-- MySQL 8.0
-- Docker Compose (`app` PHP-FPM, `webserver` nginx, `db`)
+- MySQL 8.0 (auth `users`, Sanctum tokens, Bills databases)
+- PostgreSQL 16 (recipe book `ri_*` tables)
+- Docker Compose (`app` PHP-FPM, `webserver` nginx, `db` MySQL, `pgsql`)
 
 ## Quick start
 
@@ -15,12 +16,17 @@ cp .env.example .env   # if needed
 docker compose up -d --build
 docker compose exec app php artisan key:generate   # first run only
 docker compose exec app php artisan migrate --force
-docker compose exec app php artisan db:seed --force
+docker compose exec app php artisan recipes:copy-mysql-to-pgsql
+# Fresh install without existing MySQL recipe data:
+# docker compose exec app php artisan db:seed --force
 ```
 
 API base URL: **http://localhost:8080/api**
 
-MySQL is also exposed on host port **3307** (`recipes` / `secret`).
+MySQL is exposed on host port **3307** (`recipes` / `secret`).
+PostgreSQL is exposed on host port **5433** (`recipes` / `secret`).
+
+Recipe models use the `pgsql` connection. Auth stays on the default MySQL connection.
 
 ## Main endpoints
 
@@ -39,6 +45,32 @@ CORS allows origins listed in `CORS_ALLOWED_ORIGINS` (default: local Vite).
 ## Production deploy
 
 See [`../plan/DEPLOY.md`](../plan/DEPLOY.md) for Debian 12 + Apache + existing MariaDB steps.
+
+### PostgreSQL on Debian
+
+The app already runs against MariaDB/MySQL on the server. Recipe `ri_*` tables move to PostgreSQL; `users` stay on MySQL.
+
+```bash
+sudo apt update
+sudo apt install postgresql php-pgsql
+sudo systemctl enable --now postgresql
+
+sudo -u postgres createuser recipes
+sudo -u postgres createdb -O recipes recipes
+sudo -u postgres psql -c "ALTER USER recipes PASSWORD 'change-me';"
+```
+
+If PHP-FPM does not pick up `pdo_pgsql`, install the versioned package (e.g. `php8.2-pgsql`) and restart FPM.
+
+Set `PGSQL_*` in production `.env` (see `.env.production.example`), then:
+
+```bash
+php artisan migrate --force
+php artisan recipes:copy-mysql-to-pgsql --force
+sudo systemctl restart php8.2-fpm   # or the PHP-FPM unit on that host
+```
+
+MySQL `ri_*` tables are left in place as a backup after the copy.
 
 ## Bills / MyBudget legacy API
 
@@ -75,5 +107,6 @@ Recipe/inventory data is **not** scoped to users — auth only gates access.
 
 - Soft-delete uses `ri_recipe.is_deleted` (not `deleted_at`).
 - `recipe_link` is `varchar(255)`.
-- Seed data comes from `database/seeders/data/api_db_dump.sql`.
+- Seed data comes from `database/seeders/data/api_db_dump.sql` (loaded into PostgreSQL).
+- `php artisan recipes:copy-mysql-to-pgsql` copies existing MySQL `ri_*` rows into PostgreSQL and resets identity sequences.
 # RecipeRebootLaravel

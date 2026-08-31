@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class Attribute extends Model
+class Attribute extends RecipeModel
 {
     protected $table = 'ri_attribute';
-
-    public $timestamps = false;
 
     protected $fillable = [
         'title',

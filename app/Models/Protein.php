@@ -2,14 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Protein extends Model
+class Protein extends RecipeModel
 {
     protected $table = 'ri_protein';
-
-    public $timestamps = false;
 
     protected $fillable = ['title'];
 

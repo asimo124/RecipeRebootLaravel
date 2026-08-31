@@ -7,6 +7,7 @@ use App\Http\Requests\StoreRecipeRequest;
 use App\Http\Requests\UpdateRecipeRequest;
 use App\Http\Resources\RecipeResource;
 use App\Models\Recipe;
+use App\Models\RecipeModel;
 use App\Services\IngredientAvailabilityService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,8 +24,7 @@ class RecipeController extends Controller
         $recipes = Recipe::query()
             ->with(['protein', 'style', 'attributes'])
             ->withMax('attributes', 'severity_level')
-            ->orderByRaw('attributes_max_severity_level IS NULL DESC')
-            ->orderBy('attributes_max_severity_level')
+            ->orderByRaw('"attributes_max_severity_level" ASC NULLS FIRST')
             ->orderBy('title')
             ->get();
 
@@ -94,7 +94,7 @@ class RecipeController extends Controller
     public function attachIngredient(Request $request, Recipe $recipe): RecipeResource
     {
         $data = $request->validate([
-            'ingredient_id' => ['required', 'integer', 'exists:ri_ingredient,id'],
+            'ingredient_id' => ['required', 'integer', RecipeModel::existsRule('ri_ingredient')],
         ]);
 
         $recipe->ingredients()->syncWithoutDetaching([$data['ingredient_id']]);
