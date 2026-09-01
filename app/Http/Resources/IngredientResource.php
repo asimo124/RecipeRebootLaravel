@@ -14,6 +14,7 @@ class IngredientResource extends JsonResource
             'title' => $this->title,
             'ingredient_type_id' => $this->ingredient_type_id,
             'type' => new IngredientTypeResource($this->whenLoaded('type')),
+            'recipe_count' => (int) ($this->recipes_count ?? 0),
             'parents' => IngredientResource::collection($this->whenLoaded('parents')),
             'children' => IngredientResource::collection($this->whenLoaded('children')),
         ];

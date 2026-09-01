@@ -17,7 +17,7 @@ class IngredientController extends Controller
 {
     public function index(Request $request): AnonymousResourceCollection
     {
-        $query = Ingredient::query()->with('type')->orderBy('title');
+        $query = Ingredient::query()->with('type')->withCount('recipes')->orderBy('title');
 
         if ($search = $request->query('search')) {
             $query->where('title', 'ilike', '%'.$search.'%');
@@ -50,6 +50,7 @@ class IngredientController extends Controller
 
         $ingredients = Ingredient::query()
             ->with(['type', 'parents'])
+            ->withCount('recipes')
             ->whereIn('id', $ids)
             ->orderBy('title')
             ->get();
@@ -66,6 +67,7 @@ class IngredientController extends Controller
         $ingredient = Ingredient::query()->create($data);
         $this->syncParents($ingredient, $parentIds);
         $ingredient->load(['type', 'parents']);
+        $ingredient->loadCount('recipes');
 
         return new IngredientResource($ingredient);
     }
@@ -73,6 +75,7 @@ class IngredientController extends Controller
     public function show(Ingredient $ingredient): IngredientResource
     {
         $ingredient->load(['type', 'parents', 'children']);
+        $ingredient->loadCount('recipes');
 
         return new IngredientResource($ingredient);
     }
@@ -86,6 +89,7 @@ class IngredientController extends Controller
         $ingredient->update($data);
         $this->syncParents($ingredient, $parentIds);
         $ingredient->load(['type', 'parents']);
+        $ingredient->loadCount('recipes');
 
         return new IngredientResource($ingredient);
     }
