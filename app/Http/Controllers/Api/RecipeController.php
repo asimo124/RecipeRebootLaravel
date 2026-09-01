@@ -22,7 +22,13 @@ class RecipeController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $recipes = Recipe::query()
-            ->with(['protein', 'style', 'attributes', 'ingredients:id,title'])
+            ->with([
+                'protein',
+                'style',
+                'attributes',
+                'ingredients:id,title',
+                'ingredients.parents:id,title',
+            ])
             ->withMax('attributes', 'severity_level')
             ->orderByRaw('"attributes_max_severity_level" ASC NULLS FIRST')
             ->orderBy('title')
