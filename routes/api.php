@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AttributeController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\IngredientController;
+use App\Http\Controllers\Api\IngredientTypeController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\ProteinController;
 use App\Http\Controllers\Api\RecipeController;
@@ -19,8 +20,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('recipes/{recipe}/ingredients', [RecipeController::class, 'attachIngredient']);
     Route::delete('recipes/{recipe}/ingredients/{ingredientId}', [RecipeController::class, 'detachIngredient']);
 
+    Route::get('ingredient-types', [IngredientTypeController::class, 'index']);
+
     Route::get('ingredients', [IngredientController::class, 'index']);
     Route::post('ingredients', [IngredientController::class, 'store']);
+    Route::put('ingredients/batch-type', [IngredientController::class, 'batchUpdateType']);
     Route::get('ingredients/{ingredient}', [IngredientController::class, 'show']);
     Route::put('ingredients/{ingredient}', [IngredientController::class, 'update']);
     Route::delete('ingredients/{ingredient}', [IngredientController::class, 'destroy']);

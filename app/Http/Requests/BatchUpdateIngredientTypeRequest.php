@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use App\Models\RecipeModel;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateIngredientRequest extends FormRequest
+class BatchUpdateIngredientTypeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,10 +15,9 @@ class UpdateIngredientRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'ids' => ['required', 'array', 'min:1'],
+            'ids.*' => ['integer', RecipeModel::existsRule('ri_ingredient')],
             'ingredient_type_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_ingredient_type')],
-            'parent_ids' => ['sometimes', 'array'],
-            'parent_ids.*' => ['integer', RecipeModel::existsRule('ri_ingredient')],
         ];
     }
 }

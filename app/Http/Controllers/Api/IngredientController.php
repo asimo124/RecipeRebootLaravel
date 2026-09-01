@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BatchUpdateIngredientTypeRequest;
 use App\Http\Requests\StoreIngredientRequest;
 use App\Http\Requests\StoreRelatedIngredientRequest;
 use App\Http\Requests\UpdateIngredientRequest;
@@ -22,15 +23,49 @@ class IngredientController extends Controller
             $query->where('title', 'ilike', '%'.$search.'%');
         }
 
-        $limit = min((int) $request->query('limit', 50), 100);
+        if ($request->filled('ingredient_type_id')) {
+            $query->where('ingredient_type_id', (int) $request->query('ingredient_type_id'));
+        }
 
-        return IngredientResource::collection($query->limit($limit)->get());
+        if ($request->has('limit')) {
+            $limit = min(max((int) $request->query('limit'), 1), 100);
+
+            return IngredientResource::collection($query->limit($limit)->get());
+        }
+
+        $query->with('parents');
+
+        return IngredientResource::collection($query->get());
+    }
+
+    public function batchUpdateType(BatchUpdateIngredientTypeRequest $request): AnonymousResourceCollection
+    {
+        $data = $request->validated();
+        $ids = $data['ids'];
+        $typeId = $data['ingredient_type_id'] ?? null;
+
+        Ingredient::query()->whereIn('id', $ids)->update([
+            'ingredient_type_id' => $typeId,
+        ]);
+
+        $ingredients = Ingredient::query()
+            ->with(['type', 'parents'])
+            ->whereIn('id', $ids)
+            ->orderBy('title')
+            ->get();
+
+        return IngredientResource::collection($ingredients);
     }
 
     public function store(StoreIngredientRequest $request): IngredientResource
     {
-        $ingredient = Ingredient::query()->create($request->validated());
-        $ingredient->load('type');
+        $data = $request->validated();
+        $parentIds = $data['parent_ids'] ?? null;
+        unset($data['parent_ids']);
+
+        $ingredient = Ingredient::query()->create($data);
+        $this->syncParents($ingredient, $parentIds);
+        $ingredient->load(['type', 'parents']);
 
         return new IngredientResource($ingredient);
     }
@@ -44,8 +79,13 @@ class IngredientController extends Controller
 
     public function update(UpdateIngredientRequest $request, Ingredient $ingredient): IngredientResource
     {
-        $ingredient->update($request->validated());
-        $ingredient->load('type');
+        $data = $request->validated();
+        $parentIds = array_key_exists('parent_ids', $data) ? $data['parent_ids'] : null;
+        unset($data['parent_ids']);
+
+        $ingredient->update($data);
+        $this->syncParents($ingredient, $parentIds);
+        $ingredient->load(['type', 'parents']);
 
         return new IngredientResource($ingredient);
     }
@@ -79,5 +119,24 @@ class IngredientController extends Controller
         $ingredient->load(['type', 'parents', 'children']);
 
         return new IngredientResource($ingredient);
+    }
+
+    /**
+     * @param  array<int, mixed>|null  $parentIds
+     */
+    private function syncParents(Ingredient $ingredient, ?array $parentIds): void
+    {
+        if (! is_array($parentIds)) {
+            return;
+        }
+
+        $ids = collect($parentIds)
+            ->map(fn ($id) => (int) $id)
+            ->filter(fn ($id) => $id > 0 && $id !== (int) $ingredient->id)
+            ->unique()
+            ->values()
+            ->all();
+
+        $ingredient->parents()->sync($ids);
     }
 }

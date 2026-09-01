@@ -17,6 +17,8 @@ class StoreIngredientRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'ingredient_type_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_ingredient_type')],
+            'parent_ids' => ['sometimes', 'array'],
+            'parent_ids.*' => ['integer', RecipeModel::existsRule('ri_ingredient')],
         ];
     }
 }

@@ -14,8 +14,10 @@ class InventoryController extends Controller
     public function index(): AnonymousResourceCollection
     {
         $items = HomeInventory::query()
+            ->select('ri_home_inventory.*')
+            ->join('ri_ingredient', 'ri_ingredient.id', '=', 'ri_home_inventory.ingredient_id')
             ->with(['ingredient.type'])
-            ->orderBy('id')
+            ->orderBy('ri_ingredient.title')
             ->get();
 
         return HomeInventoryResource::collection($items);

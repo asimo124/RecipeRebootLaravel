@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\RecipeModel;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRelatedIngredientRequest extends FormRequest
 {
@@ -14,8 +15,15 @@ class StoreRelatedIngredientRequest extends FormRequest
 
     public function rules(): array
     {
+        $ingredientId = (int) ($this->route('ingredient')?->id ?? $this->route('ingredient'));
+
         return [
-            'related_ingredient_id' => ['required', 'integer', RecipeModel::existsRule('ri_ingredient'), 'different:ingredient'],
+            'related_ingredient_id' => [
+                'required',
+                'integer',
+                RecipeModel::existsRule('ri_ingredient'),
+                Rule::notIn([$ingredientId]),
+            ],
         ];
     }
 }

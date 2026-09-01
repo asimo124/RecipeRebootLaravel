@@ -161,7 +161,9 @@ INSERT INTO `ri_ingredient_type` (`id`, `title`) VALUES
 (1, 'Protein'),
 (2, 'Starch'),
 (3, 'Vegetable'),
-(4, 'Other');
+(4, 'Other'),
+(5, 'Fat'),
+(6, 'Fruit');
 
 INSERT INTO `ri_protein` (`id`, `title`) VALUES
 (1, 'Chicken'),
