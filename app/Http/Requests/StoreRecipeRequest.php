@@ -22,6 +22,7 @@ class StoreRecipeRequest extends FormRequest
             'protein_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_protein')],
             'recipe_style_id' => ['nullable', 'integer', RecipeModel::existsRule('ri_recipe_style')],
             'recipe_link' => ['nullable', 'string', 'max:255'],
+            'used_recently' => ['nullable', 'boolean'],
             'ingredient_ids' => ['sometimes', 'array'],
             'ingredient_ids.*' => ['integer', RecipeModel::existsRule('ri_ingredient')],
             'attribute_ids' => ['sometimes', 'array'],

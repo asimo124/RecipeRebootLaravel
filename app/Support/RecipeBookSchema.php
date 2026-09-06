@@ -57,6 +57,7 @@ class RecipeBookSchema
                 $table->tinyInteger('is_deleted')->default(0);
                 $table->date('last_date_made')->nullable();
                 $table->tinyInteger('contains_gluten')->default(0)->nullable();
+                $table->tinyInteger('used_recently')->default(0);
                 $table->string('image_path')->nullable();
                 $table->unsignedInteger('protein_id')->nullable();
                 $table->unsignedInteger('recipe_style_id')->nullable();
@@ -102,6 +103,32 @@ class RecipeBookSchema
                 $table->foreign('related_ingredient_id')->references('id')->on('ri_ingredient')->cascadeOnDelete();
             });
         }
+    }
+
+    public static function addUsedRecentlyColumn(): void
+    {
+        $schema = Schema::connection(RecipeModel::CONNECTION_NAME);
+
+        if (! $schema->hasTable('ri_recipe') || $schema->hasColumn('ri_recipe', 'used_recently')) {
+            return;
+        }
+
+        $schema->table('ri_recipe', function (Blueprint $table) {
+            $table->tinyInteger('used_recently')->default(0);
+        });
+    }
+
+    public static function dropUsedRecentlyColumn(): void
+    {
+        $schema = Schema::connection(RecipeModel::CONNECTION_NAME);
+
+        if (! $schema->hasTable('ri_recipe') || ! $schema->hasColumn('ri_recipe', 'used_recently')) {
+            return;
+        }
+
+        $schema->table('ri_recipe', function (Blueprint $table) {
+            $table->dropColumn('used_recently');
+        });
     }
 
     public static function createAttributeTables(): void

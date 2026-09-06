@@ -21,11 +21,13 @@ class Recipe extends RecipeModel
         'protein_id',
         'recipe_style_id',
         'recipe_link',
+        'used_recently',
     ];
 
     protected $casts = [
         'is_deleted' => 'boolean',
         'contains_gluten' => 'boolean',
+        'used_recently' => 'boolean',
         'last_date_made' => 'date',
     ];
 

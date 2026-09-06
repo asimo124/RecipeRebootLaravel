@@ -19,6 +19,7 @@ class RecipeResource extends JsonResource
             'protein_id' => $this->protein_id,
             'recipe_style_id' => $this->recipe_style_id,
             'recipe_link' => $this->recipe_link,
+            'used_recently' => (bool) $this->used_recently,
             'max_severity' => $this->resolveMaxSeverity(),
             'protein' => new ProteinResource($this->whenLoaded('protein')),
             'style' => new RecipeStyleResource($this->whenLoaded('style')),
