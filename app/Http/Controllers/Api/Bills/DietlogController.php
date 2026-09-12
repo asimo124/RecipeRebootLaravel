@@ -19,6 +19,10 @@ class DietlogController extends BillsApiController
     {
         return $this->legacy('dietlog/add_gluten.php', $request);
     }
+    public function addYogurt(Request $request): JsonResponse
+    {
+        return $this->legacy('dietlog/add_yogurt.php', $request);
+    }
     public function inc(Request $request): JsonResponse
     {
         return $this->legacy('dietlog_inc.php', $request);
