@@ -70,6 +70,8 @@ return [
 
     // dietlog
     'dietlog/add_oatmeal.php' => ['App\Http\Controllers\Api\Bills\DietlogController', 'addOatmeal'],
+    'dietlog/add_beef.php' => ['App\Http\Controllers\Api\Bills\DietlogController', 'addBeef'],
+    'dietlog/add_gluten.php' => ['App\Http\Controllers\Api\Bills\DietlogController', 'addGluten'],
     'dietlog_entry_create.php' => ['App\Http\Controllers\Api\Bills\DietlogEntryController', 'store'],
     'dietlog_entry_delete.php' => ['App\Http\Controllers\Api\Bills\DietlogEntryController', 'destroy'],
     'dietlog_entry_update.php' => ['App\Http\Controllers\Api\Bills\DietlogEntryController', 'update'],
