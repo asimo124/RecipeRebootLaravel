@@ -13,6 +13,7 @@ return [
 
     // apple_notes
     'apple_notes/export.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'export'],
+    'apple_notes/import.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'import'],
     'apple_notes/upload.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'upload'],
     'deleteAppleNotes.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'destroy'],
     'loadAppleNotes.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'index'],

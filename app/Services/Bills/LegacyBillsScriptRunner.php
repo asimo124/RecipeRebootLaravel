@@ -117,17 +117,24 @@ class LegacyBillsScriptRunner
         $live = config('database.connections.asimo124_bills');
         $test = config('database.connections.asimo124_bills_test');
         $recipes = config('database.connections.mysql');
+        $pgsql = config('database.connections.pgsql');
 
         putenv('BILLS_DB_HOST='.$live['host']);
         putenv('BILLS_DB_PORT='.(string) $live['port']);
         putenv('BILLS_DB_DATABASE='.$live['database']);
         putenv('BILLS_DB_DATABASE3='.$test['database']);
-        putenv('BILLS_DB_DATABASE4='.$recipes['database']);
         putenv('BILLS_DB_USERNAME='.$live['username']);
         putenv('BILLS_DB_PASSWORD='.$live['password']);
 
         // api_db is optional; fall back to recipes DB name when not configured.
         putenv('BILLS_DB_DATABASE2='.($recipes['database'] ?? 'api_db'));
+
+        putenv('BILLS_DB_HOST4='.($pgsql['host'] ?? ''));
+        putenv('BILLS_DB_PORT4='.(string) ($pgsql['port'] ?? 5432));
+        putenv('BILLS_DB_DATABASE4='.($pgsql['database'] ?? 'recipes'));
+        putenv('BILLS_DB_USERNAME4='.($pgsql['username'] ?? ''));
+        putenv('BILLS_DB_PASSWORD4='.($pgsql['password'] ?? ''));
+        putenv('APPLE_NOTES_IMPORT_TOKEN='.(string) config('bills.apple_notes_import_token', ''));
     }
 
     /**

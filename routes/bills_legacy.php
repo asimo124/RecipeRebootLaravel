@@ -6,6 +6,7 @@ $legacyMap = require __DIR__.'/bills_legacy_map.php';
 
 $publicPaths = [
     'auth/login.php',
+    'apple_notes/import.php',
 ];
 
 foreach ($legacyMap as $legacyPath => [$controller, $action]) {

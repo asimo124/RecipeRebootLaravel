@@ -30,4 +30,15 @@ return [
       'DISPOSABLE_INCOME_TRACKER_DATA_DIR',
       storage_path('app/disposable_income_tracker')
   ),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Apple Notes machine import
+  |--------------------------------------------------------------------------
+  |
+  | Long-lived bearer token for POST /api/apple_notes/import.php (cron/launchd).
+  | The interactive upload at /api/apple_notes/upload.php still uses Sanctum.
+  |
+  */
+  'apple_notes_import_token' => env('APPLE_NOTES_IMPORT_TOKEN', ''),
 ];
