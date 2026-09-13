@@ -135,6 +135,7 @@ class LegacyBillsScriptRunner
         putenv('BILLS_DB_USERNAME4='.($pgsql['username'] ?? ''));
         putenv('BILLS_DB_PASSWORD4='.($pgsql['password'] ?? ''));
         putenv('APPLE_NOTES_IMPORT_TOKEN='.(string) config('bills.apple_notes_import_token', ''));
+        putenv('APPLE_CALENDAR_IMPORT_TOKEN='.(string) config('bills.apple_calendar_import_token', ''));
     }
 
     /**

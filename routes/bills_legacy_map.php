@@ -18,6 +18,13 @@ return [
     'deleteAppleNotes.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'destroy'],
     'loadAppleNotes.php' => ['App\Http\Controllers\Api\Bills\AppleNotesController', 'index'],
 
+    // apple_calendar
+    'apple_calendar/export.php' => ['App\Http\Controllers\Api\Bills\AppleCalendarEventsController', 'export'],
+    'apple_calendar/import.php' => ['App\Http\Controllers\Api\Bills\AppleCalendarEventsController', 'import'],
+    'apple_calendar/upload.php' => ['App\Http\Controllers\Api\Bills\AppleCalendarEventsController', 'upload'],
+    'deleteAppleCalendarEvents.php' => ['App\Http\Controllers\Api\Bills\AppleCalendarEventsController', 'destroy'],
+    'loadAppleCalendarEvents.php' => ['App\Http\Controllers\Api\Bills\AppleCalendarEventsController', 'index'],
+
     // audit
     'audit/upload.php' => ['App\Http\Controllers\Api\Bills\AuditController', 'upload'],
 

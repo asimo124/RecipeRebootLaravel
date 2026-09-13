@@ -41,4 +41,15 @@ return [
   |
   */
   'apple_notes_import_token' => env('APPLE_NOTES_IMPORT_TOKEN', ''),
+
+  /*
+  |--------------------------------------------------------------------------
+  | Apple Calendar machine import
+  |--------------------------------------------------------------------------
+  |
+  | Long-lived bearer token for POST /api/apple_calendar/import.php.
+  | Falls back to APPLE_NOTES_IMPORT_TOKEN when unset.
+  |
+  */
+  'apple_calendar_import_token' => env('APPLE_CALENDAR_IMPORT_TOKEN', env('APPLE_NOTES_IMPORT_TOKEN', '')),
 ];
