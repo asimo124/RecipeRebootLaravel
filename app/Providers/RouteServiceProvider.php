@@ -28,7 +28,12 @@ class RouteServiceProvider extends ServiceProvider
         Route::model('inventory', HomeInventory::class);
 
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            // Budget Progress walks paycheck-by-paycheck; 60/min is easy to hit.
+            if ($request->user()) {
+                return Limit::perMinute(300)->by($request->user()->id);
+            }
+
+            return Limit::perMinute(60)->by($request->ip());
         });
 
         $this->routes(function () {
