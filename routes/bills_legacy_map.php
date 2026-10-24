@@ -130,6 +130,12 @@ return [
     'syncExpenses.php' => ['App\Http\Controllers\Api\Bills\ExpenseController', 'sync'],
     'updateExpensesAppCollapsed.php' => ['App\Http\Controllers\Api\Bills\ExpensesAppController', 'updateCollapsed'],
 
+    // extra purchases
+    'extra_purchases/create.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'store'],
+    'extra_purchases/delete.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'destroy'],
+    'extra_purchases/list.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'index'],
+    'extra_purchases/update.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'update'],
+
     // food log
     'addFoodLogGeneralItem.php' => ['App\Http\Controllers\Api\Bills\FoodLogController', 'storeGeneralItem'],
     'addFoodLogItem.php' => ['App\Http\Controllers\Api\Bills\FoodLogController', 'storeItem'],
