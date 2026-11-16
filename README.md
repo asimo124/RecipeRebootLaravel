@@ -46,6 +46,18 @@ scripts/import-bills-dbs.sh            # or: scripts/import-bills-dbs.sh asimo12
 
 `docker/mysql/dumps/` is gitignored. On a brand-new MySQL volume the two databases are created empty automatically; then run the import.
 
+### api.hawleywebdesign.com (Yii) in the same stack
+
+The `api` service runs the Yii2 app (mounted from `API_SITE_HOST_PATH`) against the `api_db` database on the `db` container.
+
+- URL: **http://localhost:8082** (`API_SITE_PORT` to change). The Items CRUD is at `/item`.
+- Its `config/db.php` reads `API_DB_*` from the container; on the server it falls back to the existing values.
+- Load or refresh the data the same way as the Bills databases: put `api_db.sql` (or `.sql.gz`) in `docker/mysql/dumps/` and run `scripts/import-bills-dbs.sh api_db`.
+
+### Last Time I
+
+MyBudgetLP's **Last Time I** page uses native Laravel endpoints (`LastTimeController`) on the `api_db` connection, under `/api/last_time/*.php`, with Sanctum auth. They read the same `ltc_item` / `ltc_item_used_history` tables as the Yii `last-time` API. On the server, set `API_DB_DATABASE=api_db` in `.env`; host, user and password default to `DB_*`.
+
 ## Main endpoints
 
 | Resource | Path |

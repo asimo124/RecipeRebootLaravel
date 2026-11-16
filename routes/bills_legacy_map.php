@@ -136,6 +136,13 @@ return [
     'extra_purchases/list.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'index'],
     'extra_purchases/update.php' => ['App\Http\Controllers\Api\Bills\ExtraPurchaseController', 'update'],
 
+    // last time i (api_db ltc_* tables; replaces api.hawleywebdesign.com/last-time for MyBudgetLP)
+    'last_time/calendar.php' => ['App\Http\Controllers\Api\Bills\LastTimeController', 'calendar'],
+    'last_time/create.php' => ['App\Http\Controllers\Api\Bills\LastTimeController', 'store'],
+    'last_time/delete.php' => ['App\Http\Controllers\Api\Bills\LastTimeController', 'destroy'],
+    'last_time/items.php' => ['App\Http\Controllers\Api\Bills\LastTimeController', 'items'],
+    'last_time/search.php' => ['App\Http\Controllers\Api\Bills\LastTimeController', 'search'],
+
     // food log
     'addFoodLogGeneralItem.php' => ['App\Http\Controllers\Api\Bills\FoodLogController', 'storeGeneralItem'],
     'addFoodLogItem.php' => ['App\Http\Controllers\Api\Bills\FoodLogController', 'storeItem'],

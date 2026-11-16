@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Load BillsSite MySQL dumps into the Docker `db` container.
+# Load BillsSite and api_db MySQL dumps into the Docker `db` container.
 #
 # Put the dumps in docker/mysql/dumps/ named after the database:
 #   docker/mysql/dumps/asimo124_bills.sql       (or .sql.gz)
 #   docker/mysql/dumps/asimo124_bills_test.sql  (or .sql.gz)
+#   docker/mysql/dumps/api_db.sql               (or .sql.gz)
 #
 # Usage (from the repo root, with `docker compose up -d` running):
 #   scripts/import-bills-dbs.sh                  # imports every DB that has a dump
@@ -20,7 +21,7 @@ DUMP_DIR=docker/mysql/dumps
 if [ "$#" -gt 0 ]; then
   DBS=("$@")
 else
-  DBS=(asimo124_bills asimo124_bills_test)
+  DBS=(asimo124_bills asimo124_bills_test api_db)
 fi
 
 mysql_root() {
