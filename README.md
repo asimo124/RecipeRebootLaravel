@@ -28,6 +28,24 @@ PostgreSQL is exposed on host port **5433** (`recipes` / `secret`).
 
 Recipe models use the `pgsql` connection. Auth stays on the default MySQL connection.
 
+### BillsSite (standalone) in the same stack
+
+The `bills` service runs the pure-PHP BillsSite repo (mounted from `BILLS_SITE_HOST_PATH`) on the same PHP image, MySQL and PostgreSQL as the API.
+
+- BillsSite URL: **http://localhost:8081** (`BILLS_SITE_PORT` to change)
+- Databases: `asimo124_bills`, `asimo124_bills_test` on the `db` container. `api_db` is not provisioned; `BILLS_DB_DATABASE2` points at `recipes`, the same fallback Laravel uses.
+- `inc/` and dotfiles are blocked by nginx.
+
+Load or refresh the Bills data from server dumps. Each database is **dropped and recreated**. MariaDB-only collations and DEFINERs are patched for MySQL 8:
+
+```bash
+cp ~/Downloads/asimo124_bills.sql docker/mysql/dumps/        # .sql or .sql.gz
+cp ~/Downloads/asimo124_bills_test.sql docker/mysql/dumps/
+scripts/import-bills-dbs.sh            # or: scripts/import-bills-dbs.sh asimo124_bills
+```
+
+`docker/mysql/dumps/` is gitignored. On a brand-new MySQL volume the two databases are created empty automatically; then run the import.
+
 ## Main endpoints
 
 | Resource | Path |

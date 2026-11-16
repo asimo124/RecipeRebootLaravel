@@ -20,3 +20,7 @@ yarn-error.log
 /.vscode
 
 .editorconfig
+
+# Local BillsSite DB dumps (real data — never commit)
+/docker/mysql/dumps/*
+!/docker/mysql/dumps/.gitkeep
